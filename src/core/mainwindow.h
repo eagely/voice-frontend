@@ -1,16 +1,13 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
-#include <QAudioInput>
+#pragma once
+#include "backendclient.h"
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
     Q_OBJECT
 
 public:
@@ -18,12 +15,13 @@ public:
     ~MainWindow();
 
 private slots:
-    void onButtonClicked();
-    void handleNetworkReply(QNetworkReply *reply);
+    void onRecordButtonClicked();
+    void onRecordingStarted(const QString &message);
+    void onRecordingStopped(const QString &message);
+    void onErrorOccurred(const QString &error);
 
 private:
     Ui::MainWindow *ui;
-    QNetworkAccessManager *networkManager;
+    BackendClient *backendClient;
+    bool recording;
 };
-
-#endif // MAINWINDOW_H
