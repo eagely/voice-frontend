@@ -1,43 +1,43 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QNetworkRequest>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+    : QMainWindow(parent), ui(new Ui::MainWindow), recording(false)
+{
     ui->setupUi(this);
+    backendClient = new BackendClient("127.0.0.1", 8080, this);
 
-    networkManager = new QNetworkAccessManager(this);
-
-    connect(ui->submitButton, &QPushButton::clicked, this, &MainWindow::onButtonClicked);
+    connect(ui->recordingButton, &QPushButton::clicked, this, &MainWindow::onRecordButtonClicked);
+    connect(backendClient, &BackendClient::recordingStarted, this, &MainWindow::onRecordingStarted);
+    connect(backendClient, &BackendClient::recordingStopped, this, &MainWindow::onRecordingStopped);
+    connect(backendClient, &BackendClient::errorOccurred, this, &MainWindow::onErrorOccurred);
 }
 
 MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::onButtonClicked() {
-    QString data = ui->plainTextEdit->toPlainText();
-
-    QUrl url("http://localhost:8080/process");
-
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
-
-    QNetworkReply *reply = networkManager->post(request, data.toUtf8());
-
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        handleNetworkReply(reply);
-    });
+void MainWindow::onRecordButtonClicked() {
+    if (recording) {
+        backendClient->stopRecording();
+    } else {
+        backendClient->startRecording();
+    }
+    recording = !recording;
 }
 
-void MainWindow::handleNetworkReply(QNetworkReply *reply) {
-    if (reply->error() == QNetworkReply::NoError) {
-        QString response = reply->readAll();
-        ui->label->setText(response);
-    } else {
-        ui->label->setText("Error: " + reply->errorString());
-    }
+void MainWindow::onRecordingStarted(const QString &message) {
+    ui->outputLabel->setText(message);
+    qDebug() << "Recording started: " << message;
+}
 
-    reply->deleteLater();
+void MainWindow::onRecordingStopped(const QString &message) {
+    ui->outputLabel->setText(message);
+    qDebug() << "Recording stopped: " << message;
+}
+
+void MainWindow::onErrorOccurred(const QString &error) {
+    ui->outputLabel->setText(error);
+    qWarning() << "Error: " << error;
 }
