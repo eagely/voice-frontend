@@ -10,15 +10,21 @@ CONFIG += c++17
 
 SOURCES += \
     src/core/backendclient.cpp \
-    src/main.cpp \
-    src/core/mainwindow.cpp
+    src/core/mainwidget.cpp \
+    src/core/mainwindow.cpp \
+    src/core/settingswidget.cpp \
+    src/main.cpp
 
 HEADERS += \
     src/core/backendclient.h \
-    src/core/mainwindow.h
+    src/core/mainwidget.h \
+    src/core/mainwindow.h \
+    src/core/settingswidget.h
 
 FORMS += \
-    src/gui/mainwindow.ui
+    src/gui/mainwidget.ui \
+    src/gui/mainwidget.ui \
+    src/gui/settingswidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

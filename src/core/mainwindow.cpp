@@ -1,43 +1,31 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <QDebug>
+#include <QMainWindow>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), recording(false)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    stackedWidget(new QStackedWidget(this)),
+    mainWidget(new MainWidget),
+    settingsWidget(new SettingsWidget)
 {
-    ui->setupUi(this);
-    backendClient = new BackendClient("127.0.0.1", 8080, this);
+    setWindowTitle("Widget Switcher");
 
-    connect(ui->recordingButton, &QPushButton::clicked, this, &MainWindow::onRecordButtonClicked);
-    connect(backendClient, &BackendClient::recordingStarted, this, &MainWindow::onRecordingStarted);
-    connect(backendClient, &BackendClient::recordingStopped, this, &MainWindow::onRecordingStopped);
-    connect(backendClient, &BackendClient::errorOccurred, this, &MainWindow::onErrorOccurred);
+    stackedWidget->addWidget(mainWidget);
+    stackedWidget->addWidget(settingsWidget);
+
+    setCentralWidget(stackedWidget);
+
+    connect(mainWidget, &MainWidget::openSettingsWidget, this, &MainWindow::onOpenSettingsWidget);
+    connect(settingsWidget, &SettingsWidget::openMainWidget, this, &MainWindow::onOpenMainWidget);
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
+MainWindow::~MainWindow() {}
+
+void MainWindow::onOpenMainWidget()
+{
+    stackedWidget->setCurrentWidget(mainWidget);
 }
 
-void MainWindow::onRecordButtonClicked() {
-    if (recording) {
-        backendClient->stopRecording();
-    } else {
-        backendClient->startRecording();
-    }
-    recording = !recording;
-}
-
-void MainWindow::onRecordingStarted(const QString &message) {
-    ui->outputLabel->setText(message);
-    qDebug() << "Recording started: " << message;
-}
-
-void MainWindow::onRecordingStopped(const QString &message) {
-    ui->outputLabel->setText(message);
-    qDebug() << "Recording stopped: " << message;
-}
-
-void MainWindow::onErrorOccurred(const QString &error) {
-    ui->outputLabel->setText(error);
-    qWarning() << "Error: " << error;
+void MainWindow::onOpenSettingsWidget()
+{
+    stackedWidget->setCurrentWidget(settingsWidget);
 }
