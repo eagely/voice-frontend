@@ -1,7 +1,9 @@
 #pragma once
-#include "backendclient.h"
+#include "mainwidget.h"
+#include "settingswidget.h"
 #include <QMainWindow>
-
+#include <QWidget>
+#include <qstackedwidget.h>
 namespace Ui {
 class MainWindow;
 }
@@ -15,13 +17,11 @@ public:
     ~MainWindow();
 
 private slots:
-    void onRecordButtonClicked();
-    void onRecordingStarted(const QString &message);
-    void onRecordingStopped(const QString &message);
-    void onErrorOccurred(const QString &error);
+    void onOpenMainWidget();
+    void onOpenSettingsWidget();
 
 private:
-    Ui::MainWindow *ui;
-    BackendClient *backendClient;
-    bool recording;
+    QStackedWidget *stackedWidget;
+    MainWidget *mainWidget;
+    SettingsWidget *settingsWidget;
 };
