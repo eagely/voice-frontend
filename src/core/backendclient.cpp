@@ -1,14 +1,17 @@
 #include "backendclient.h"
 #include <QDebug>
+#include <QUrl>
+#include <QWebSocket>
 
 BackendClient::BackendClient(const QString &host, quint16 port, QObject *parent)
-    : QObject(parent), socket(new QTcpSocket(this))
+    : QObject(parent), socket(new QWebSocket)
 {
-    connect(socket, &QTcpSocket::connected, this, &BackendClient::onConnected);
-    connect(socket, &QTcpSocket::readyRead, this, &BackendClient::onReadyRead);
-    connect(socket, &QTcpSocket::bytesWritten, this, &BackendClient::onBytesWritten);
+    connect(socket, &QWebSocket::connected, this, &BackendClient::onConnected);
+    connect(socket, &QWebSocket::textMessageReceived, this, &BackendClient::onTextMessageReceived);
+    connect(socket, &QWebSocket::bytesWritten, this, &BackendClient::onBytesWritten);
 
-    socket->connectToHost(host, port);
+    QString url = QString("ws://%1:%2").arg(host).arg(port);
+    socket->open(QUrl(url));
 }
 
 void BackendClient::startRecording() {
@@ -20,16 +23,15 @@ void BackendClient::stopRecording() {
 }
 
 void BackendClient::sendMessage(const QString &message) {
-    if (socket->state() == QTcpSocket::ConnectedState) {
+    if (socket->state() == QAbstractSocket::ConnectedState) {
         QString fullMessage = message;
         if (!message.endsWith('\n')) {
             fullMessage += '\n';
         }
-
-        socket->write(fullMessage.toUtf8());
-        qDebug() << "Message sent: " << message;
+        socket->sendTextMessage(fullMessage);
+        qDebug() << "Message sent:" << message;
     } else {
-        qDebug() << "Socket not connected.";
+        qDebug() << "WebSocket not connected.";
         emit errorOccurred("Socket not connected.");
     }
 }
@@ -38,11 +40,16 @@ void BackendClient::onConnected() {
     qDebug() << "Connected to host!";
 }
 
-void BackendClient::onReadyRead() {
-    QByteArray data = socket->readAll();
-    emit recordingStarted(QString::fromUtf8(data));
+void BackendClient::onTextMessageReceived(const QString &message) {
+    QString text = message;
+    if (text.endsWith("\n ")) {
+        text = text.left(text.length() - 2) + " ";
+    } else if (text.endsWith("\n")) {
+        text.chop(1);
+    }
+    emit recordingStarted(text);
 }
 
 void BackendClient::onBytesWritten(qint64 bytes) {
-    qDebug() << bytes << "bytes written to socket.";
+    qDebug() << bytes << "bytes written to WebSocket.";
 }

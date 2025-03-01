@@ -10,11 +10,10 @@ MainWidget::MainWidget(QWidget *parent)
     backendClient = new BackendClient("127.0.0.1", 8080, this);
 
     setWindowFlags(Qt::FramelessWindowHint);
-    ui->outputLabel->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
-    ui->outputLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    ui->output->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
+    ui->output->setTextInteractionFlags(Qt::TextSelectableByMouse);
     connect(ui->recordingButton, &QPushButton::clicked, this, &MainWidget::onRecordButtonClicked);
     connect(backendClient, &BackendClient::recordingStarted, this, &MainWidget::onRecordingStarted);
-    connect(backendClient, &BackendClient::recordingStopped, this, &MainWidget::onRecordingStopped);
     connect(backendClient, &BackendClient::errorOccurred, this, &MainWidget::onErrorOccurred);
     connect(ui->menuButton, &QPushButton::clicked, this, &MainWidget::openSettingsWidget);
 }
@@ -33,16 +32,19 @@ void MainWidget::onRecordButtonClicked() {
 }
 
 void MainWidget::onRecordingStarted(const QString &message) {
-    ui->outputLabel->setText(message);
+    if (recording)
+        ui->output->setPlainText(message);
+    else
+        ui->output->setPlainText(ui->output->toPlainText() + message);
     qDebug() << "Recording started: " << message;
 }
 
 void MainWidget::onRecordingStopped(const QString &message) {
-    ui->outputLabel->setText(message);
+    ui->output->setPlainText(message);
     qDebug() << "Recording stopped: " << message;
 }
 
 void MainWidget::onErrorOccurred(const QString &error) {
-    ui->outputLabel->setText(error);
+    ui->output->setPlainText(error);
     qWarning() << "Error: " << error;
 }
