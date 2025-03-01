@@ -1,6 +1,6 @@
 #pragma once
 #include <QObject>
-#include <QTcpSocket>
+#include <QWebSocket>
 
 class BackendClient : public QObject
 {
@@ -18,11 +18,11 @@ signals:
 
 private slots:
     void onConnected();
-    void onReadyRead();
+    void onTextMessageReceived(const QString &message);
     void onBytesWritten(qint64 bytes);
 
 private:
     void sendMessage(const QString &message);
 
-    QTcpSocket *socket;
+    QWebSocket *socket;
 };
