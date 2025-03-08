@@ -15,12 +15,19 @@ signals:
     void openMainWidget();
 
 private slots:
-    void onAudioRecording(qint32 id);
-    void onTextToSpeech(qint32 id);
+    void onAudioRecordingGroupPressed(qint32 id);
+    void onSpeechToTextGroupPressed(qint32 id);
+    void onGeneralAnswersGroupPressed(qint32 id);
+    void onParsingGroupPressed(qint32 id);
+    void onOutputGroupPressed(qint32 id);
 
 private:
     QButtonGroup *audioRecordingGroup;
-    QButtonGroup *textToSpeechGroup;
+    QButtonGroup *speechToTextGroup;
+    QButtonGroup *generalAnswersGroup;
+    QButtonGroup *parsingGroup;
+    QButtonGroup *outputGroup;
+
     QSettings *settings;
     Ui::SettingsWidget *ui;
 };
