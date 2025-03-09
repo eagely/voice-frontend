@@ -2,8 +2,9 @@
 #include <QButtonGroup>
 #include <QDebug>
 
-SettingsWidget::SettingsWidget(QWidget *parent) :
+SettingsWidget::SettingsWidget(QWidget *parent, BackendClient *backendClient) :
     QWidget(parent),
+    backendClient(backendClient),
     ui(new Ui::SettingsWidget)
 {
     ui->setupUi(this);
@@ -45,40 +46,40 @@ SettingsWidget::~SettingsWidget()
 
 void SettingsWidget::onAudioRecordingGroupPressed(qint32 id) {
     if (id == audioRecordingGroup->id(ui->recorderLocalButton)) {
-        qDebug() << "Audio Recording selected: Local";
+        backendClient->config("audio.local");
     } else if (id == audioRecordingGroup->id(ui->recorderRemoteButton)) {
-        qDebug() << "Audio Recording selected: Remote";
+        backendClient->config("audio.remote");
     }
 }
 
 void SettingsWidget::onSpeechToTextGroupPressed(qint32 id) {
     if (id == speechToTextGroup->id(ui->speechToTextLocalButton)) {
-        qDebug() << "Speech-To-Text selected: Local";
+        backendClient->config("speechtotext.local");
     } else if (id == speechToTextGroup->id(ui->speechToTextCloudButton)) {
-        qDebug() << "Speech-To-Text selected: Cloud";
+        backendClient->config("speechtotext.cloud");
     }
 }
 
 void SettingsWidget::onGeneralAnswersGroupPressed(qint32 id) {
     if (id == generalAnswersGroup->id(ui->generalAnswersLocalButton)) {
-        qDebug() << "General Answers selected: Local";
+        backendClient->config("generalanswers.local");
     } else if (id == generalAnswersGroup->id(ui->generalAnswersCloudButton)) {
-        qDebug() << "General Answers selected: Cloud";
+        backendClient->config("generalanswers.cloud");
     }
 }
 
 void SettingsWidget::onParsingGroupPressed(qint32 id) {
     if (id == parsingGroup->id(ui->parsingSimpleButton)) {
-        qDebug() << "Parsing selected: Simple";
+        backendClient->config("parsing.simple");
     } else if (id == parsingGroup->id(ui->parsingAdvancedButton)) {
-        qDebug() << "Parsing selected: Advanced";
+        backendClient->config("parsing.advanced");
     }
 }
 
 void SettingsWidget::onOutputGroupPressed(qint32 id) {
     if (id == outputGroup->id(ui->outputAudioButton)) {
-        qDebug() << "Output selected: Audio";
+        backendClient->config("output.audio");
     } else if (id == outputGroup->id(ui->outputTextButton)) {
-        qDebug() << "Output selected: Text";
+        backendClient->config("output.text");
     }
 }

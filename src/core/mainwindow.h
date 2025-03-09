@@ -1,4 +1,5 @@
 #pragma once
+#include "backendclient.h"
 #include "mainwidget.h"
 #include "settingswidget.h"
 #include <QMainWindow>
@@ -21,6 +22,7 @@ private slots:
     void onOpenSettingsWidget();
 
 private:
+    BackendClient *backendClient;
     QStackedWidget *stackedWidget;
     MainWidget *mainWidget;
     SettingsWidget *settingsWidget;

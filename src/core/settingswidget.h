@@ -1,6 +1,7 @@
 #pragma once
 #include <QSettings>
 #include <QWidget>
+#include "backendclient.h"
 #include "ui_settingswidget.h"
 
 class SettingsWidget : public QWidget
@@ -8,7 +9,7 @@ class SettingsWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit SettingsWidget(QWidget *parent = nullptr);
+    explicit SettingsWidget(QWidget *parent = nullptr, BackendClient *backendClient = nullptr);
     ~SettingsWidget();
 
 signals:
@@ -28,6 +29,7 @@ private:
     QButtonGroup *parsingGroup;
     QButtonGroup *outputGroup;
 
+    BackendClient *backendClient;
     QSettings *settings;
     Ui::SettingsWidget *ui;
 };
