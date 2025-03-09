@@ -14,6 +14,10 @@ BackendClient::BackendClient(const QString &host, quint16 port, QObject *parent)
     socket->open(QUrl(url));
 }
 
+void BackendClient::config(const QString &message) {
+    sendMessage("C " + message);
+}
+
 void BackendClient::startRecording() {
     sendMessage("START_RECORDING");
 }

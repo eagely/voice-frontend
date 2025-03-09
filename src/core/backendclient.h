@@ -8,6 +8,7 @@ class BackendClient : public QObject
 
 public:
     explicit BackendClient(const QString &host, quint16 port, QObject *parent = nullptr);
+    void config(const QString &message);
     void startRecording();
     void stopRecording();
 

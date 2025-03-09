@@ -1,14 +1,14 @@
 #include "mainwindow.h"
+#include "backendclient.h"
 #include <QMainWindow>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    backendClient(new BackendClient("127.0.0.1", 8080, this)),
     stackedWidget(new QStackedWidget(this)),
-    mainWidget(new MainWidget),
-    settingsWidget(new SettingsWidget)
+    mainWidget(new MainWidget(nullptr, backendClient)),
+    settingsWidget(new SettingsWidget(nullptr, backendClient))
 {
-    setWindowTitle("Widget Switcher");
-
     stackedWidget->addWidget(mainWidget);
     stackedWidget->addWidget(settingsWidget);
 

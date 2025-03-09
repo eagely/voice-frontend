@@ -3,8 +3,8 @@
 #include <QGraphicsBlurEffect>
 #include <QPainter>
 
-MainWidget::MainWidget(QWidget *parent)
-    : QWidget(parent), ui(new Ui::MainWidget), recording(false)
+MainWidget::MainWidget(QWidget *parent, BackendClient *backendClient)
+    : QWidget(parent), ui(new Ui::MainWidget), backendClient(backendClient), recording(false)
 {
     ui->setupUi(this);
     backendClient = new BackendClient("127.0.0.1", 8080, this);
@@ -32,6 +32,7 @@ void MainWidget::onRecordButtonClicked() {
 }
 
 void MainWidget::onRecordingStarted(const QString &message) {
+    qDebug() << message;
     if (recording)
         ui->output->setPlainText(message);
     else
