@@ -16,6 +16,8 @@ signals:
     void openMainWidget();
 
 private slots:
+    void onAnyButtonPressed();
+    void onApplyButtonPressed();
     void onAudioRecordingGroupPressed(qint32 id);
     void onSpeechToTextGroupPressed(qint32 id);
     void onGeneralAnswersGroupPressed(qint32 id);
@@ -29,6 +31,7 @@ private:
     QButtonGroup *parsingGroup;
     QButtonGroup *outputGroup;
 
+    bool modifiedSinceApply;
     BackendClient *backendClient;
     QSettings *settings;
     Ui::SettingsWidget *ui;

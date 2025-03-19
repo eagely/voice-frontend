@@ -17,8 +17,7 @@ signals:
 
 private slots:
     void onRecordButtonClicked();
-    void onRecordingStarted(const QString &message);
-    void onRecordingStopped(const QString &message);
+    void onMessageReceived(const QString &message);
     void onErrorOccurred(const QString &error);
 
 private:
