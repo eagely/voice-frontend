@@ -7,23 +7,27 @@ BackendClient::BackendClient(const QString &host, quint16 port, QObject *parent)
     : QObject(parent), socket(new QWebSocket)
 {
     connect(socket, &QWebSocket::connected, this, &BackendClient::onConnected);
-    connect(socket, &QWebSocket::textMessageReceived, this, &BackendClient::onTextMessageReceived);
+    connect(socket, &QWebSocket::textMessageReceived, this, &BackendClient::onMessageReceived);
     connect(socket, &QWebSocket::bytesWritten, this, &BackendClient::onBytesWritten);
 
     QString url = QString("ws://%1:%2").arg(host).arg(port);
     socket->open(QUrl(url));
 }
 
-void BackendClient::config(const QString &message) {
-    sendMessage("C " + message);
+void BackendClient::cancel() {
+    sendMessage("AC");
+}
+
+void BackendClient::config(const QString &element) {
+    sendMessage("C" + element);
 }
 
 void BackendClient::startRecording() {
-    sendMessage("START_RECORDING");
+    sendMessage("AI");
 }
 
 void BackendClient::stopRecording() {
-    sendMessage("STOP_RECORDING");
+    sendMessage("AT");
 }
 
 void BackendClient::sendMessage(const QString &message) {
@@ -44,14 +48,15 @@ void BackendClient::onConnected() {
     qDebug() << "Connected to host!";
 }
 
-void BackendClient::onTextMessageReceived(const QString &message) {
+void BackendClient::onMessageReceived(const QString &message) {
     QString text = message;
+    qDebug() << "Received message from server:" << message;
     if (text.endsWith("\n ")) {
         text = text.left(text.length() - 2) + " ";
     } else if (text.endsWith("\n")) {
         text.chop(1);
     }
-    emit recordingStarted(text);
+    emit messageReceived(text);
 }
 
 void BackendClient::onBytesWritten(qint64 bytes) {

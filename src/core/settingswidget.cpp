@@ -37,6 +37,13 @@ SettingsWidget::SettingsWidget(QWidget *parent, BackendClient *backendClient) :
     connect(generalAnswersGroup, QOverload<int>::of(&QButtonGroup::idClicked), this, &SettingsWidget::onGeneralAnswersGroupPressed);
     connect(parsingGroup, QOverload<int>::of(&QButtonGroup::idClicked), this, &SettingsWidget::onParsingGroupPressed);
     connect(outputGroup, QOverload<int>::of(&QButtonGroup::idClicked), this, &SettingsWidget::onOutputGroupPressed);
+    const auto groups = findChildren<QButtonGroup *>();
+    for (auto group : std::as_const(groups)) {
+        connect(group,
+                QOverload<int>::of(&QButtonGroup::idClicked),
+                this,
+                &SettingsWidget::onAnyButtonPressed);
+    }
 }
 
 SettingsWidget::~SettingsWidget()
@@ -44,42 +51,55 @@ SettingsWidget::~SettingsWidget()
     delete ui;
 }
 
+void SettingsWidget::onAnyButtonPressed()
+{
+    modifiedSinceApply = true;
+    ui->applyButton->setDisabled(false);
+}
+
+void SettingsWidget::onApplyButtonPressed()
+{
+    modifiedSinceApply = false;
+    ui->applyButton->setDisabled(true);
+    backendClient->config("A");
+}
+
 void SettingsWidget::onAudioRecordingGroupPressed(qint32 id) {
     if (id == audioRecordingGroup->id(ui->recorderLocalButton)) {
-        backendClient->config("audio.local");
+        backendClient->config("recording.implementation=local");
     } else if (id == audioRecordingGroup->id(ui->recorderRemoteButton)) {
-        backendClient->config("audio.remote");
+        backendClient->config("recording.implementation=remote");
     }
 }
 
 void SettingsWidget::onSpeechToTextGroupPressed(qint32 id) {
     if (id == speechToTextGroup->id(ui->speechToTextLocalButton)) {
-        backendClient->config("speechtotext.local");
+        backendClient->config("transcription.implementation=local");
     } else if (id == speechToTextGroup->id(ui->speechToTextCloudButton)) {
-        backendClient->config("speechtotext.cloud");
+        backendClient->config("transcription.implementation=deepgram");
     }
 }
 
 void SettingsWidget::onGeneralAnswersGroupPressed(qint32 id) {
     if (id == generalAnswersGroup->id(ui->generalAnswersLocalButton)) {
-        backendClient->config("generalanswers.local");
+        backendClient->config("llm.implementation=ollama");
     } else if (id == generalAnswersGroup->id(ui->generalAnswersCloudButton)) {
-        backendClient->config("generalanswers.cloud");
+        backendClient->config("llm.implementation=deepseek");
     }
 }
 
 void SettingsWidget::onParsingGroupPressed(qint32 id) {
     if (id == parsingGroup->id(ui->parsingSimpleButton)) {
-        backendClient->config("parsing.simple");
+        backendClient->config("parsing.implementation=patternmatch");
     } else if (id == parsingGroup->id(ui->parsingAdvancedButton)) {
-        backendClient->config("parsing.advanced");
+        backendClient->config("parsing.implementation=rasa");
     }
 }
 
 void SettingsWidget::onOutputGroupPressed(qint32 id) {
     if (id == outputGroup->id(ui->outputAudioButton)) {
-        backendClient->config("output.audio");
+        backendClient->config("response.response_kind=audio");
     } else if (id == outputGroup->id(ui->outputTextButton)) {
-        backendClient->config("output.text");
+        backendClient->config("response.response_kind=text");
     }
 }
