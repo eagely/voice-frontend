@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/core/audioplayer.cpp \
     src/core/backendclient.cpp \
     src/core/mainwidget.cpp \
     src/core/mainwindow.cpp \
@@ -16,6 +17,7 @@ SOURCES += \
     src/main.cpp
 
 HEADERS += \
+    src/core/audioplayer.h \
     src/core/backendclient.h \
     src/core/mainwidget.h \
     src/core/mainwindow.h \
