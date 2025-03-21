@@ -8,11 +8,21 @@ MainWidget::MainWidget(QWidget *parent, BackendClient *backendClient)
 {
     ui->setupUi(this);
 
+    audioPlayer = new AudioPlayer();
+
     setWindowFlags(Qt::FramelessWindowHint);
     ui->output->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
     ui->output->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
     connect(ui->recordingButton, &QPushButton::clicked, this, &MainWidget::onRecordButtonClicked);
-    connect(backendClient, &BackendClient::messageReceived, this, &MainWidget::onMessageReceived);
+    connect(backendClient,
+            &BackendClient::textMessageReceived,
+            this,
+            &MainWidget::onTextMessageReceived);
+    connect(backendClient,
+            &BackendClient::binaryMessageReceived,
+            this,
+            &MainWidget::onBinaryMessageReceived);
     connect(backendClient, &BackendClient::errorOccurred, this, &MainWidget::onErrorOccurred);
     connect(ui->menuButton, &QPushButton::clicked, this, &MainWidget::openSettingsWidget);
 }
@@ -30,7 +40,14 @@ void MainWidget::onRecordButtonClicked() {
     recording = !recording;
 }
 
-void MainWidget::onMessageReceived(const QString &message) {
+void MainWidget::onBinaryMessageReceived(const QByteArray &message)
+{
+    audioPlayer->loadAudio(message);
+    audioPlayer->play();
+}
+
+void MainWidget::onTextMessageReceived(const QString &message)
+{
     qDebug() << message;
     if (recording)
         ui->output->setPlainText(message);

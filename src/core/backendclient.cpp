@@ -7,7 +7,11 @@ BackendClient::BackendClient(const QString &host, quint16 port, QObject *parent)
     : QObject(parent), socket(new QWebSocket)
 {
     connect(socket, &QWebSocket::connected, this, &BackendClient::onConnected);
-    connect(socket, &QWebSocket::textMessageReceived, this, &BackendClient::onMessageReceived);
+    connect(socket, &QWebSocket::textMessageReceived, this, &BackendClient::onTextMessageReceived);
+    connect(socket,
+            &QWebSocket::binaryMessageReceived,
+            this,
+            &BackendClient::onBinaryMessageReceived);
     connect(socket, &QWebSocket::bytesWritten, this, &BackendClient::onBytesWritten);
 
     QString url = QString("ws://%1:%2").arg(host).arg(port);
@@ -48,7 +52,14 @@ void BackendClient::onConnected() {
     qDebug() << "Connected to host!";
 }
 
-void BackendClient::onMessageReceived(const QString &message) {
+void BackendClient::onBinaryMessageReceived(const QByteArray &message)
+{
+    qDebug() << "Received binary message of length:" << message << "from server.";
+    emit binaryMessageReceived(message);
+}
+
+void BackendClient::onTextMessageReceived(const QString &message)
+{
     QString text = message;
     qDebug() << "Received message from server:" << message;
     if (text.endsWith("\n ")) {
@@ -56,7 +67,7 @@ void BackendClient::onMessageReceived(const QString &message) {
     } else if (text.endsWith("\n")) {
         text.chop(1);
     }
-    emit messageReceived(text);
+    emit textMessageReceived(text);
 }
 
 void BackendClient::onBytesWritten(qint64 bytes) {

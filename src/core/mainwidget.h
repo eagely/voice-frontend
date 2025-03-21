@@ -1,8 +1,9 @@
 #pragma once
-#include "backendclient.h"
-#include "ui_mainwidget.h"
 #include <QGraphicsScene>
 #include <QWidget>
+#include "audioplayer.h"
+#include "backendclient.h"
+#include "ui_mainwidget.h"
 
 class MainWidget : public QWidget
 {
@@ -17,11 +18,13 @@ signals:
 
 private slots:
     void onRecordButtonClicked();
-    void onMessageReceived(const QString &message);
+    void onBinaryMessageReceived(const QByteArray &message);
+    void onTextMessageReceived(const QString &message);
     void onErrorOccurred(const QString &error);
 
 private:
     Ui::MainWidget *ui;
+    AudioPlayer *audioPlayer;
     BackendClient *backendClient;
     bool recording;
 };

@@ -14,12 +14,14 @@ public:
     void stopRecording();
 
 signals:
-    void messageReceived(const QString &message);
+    void binaryMessageReceived(const QByteArray &message);
+    void textMessageReceived(const QString &message);
     void errorOccurred(const QString &error);
 
 private slots:
     void onConnected();
-    void onMessageReceived(const QString &message);
+    void onBinaryMessageReceived(const QByteArray &messge);
+    void onTextMessageReceived(const QString &message);
     void onBytesWritten(qint64 bytes);
 
 private:
