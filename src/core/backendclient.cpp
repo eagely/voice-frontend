@@ -54,7 +54,7 @@ void BackendClient::onConnected() {
 
 void BackendClient::onBinaryMessageReceived(const QByteArray &message)
 {
-    qDebug() << "Received binary message of length:" << message << "from server.";
+    qDebug() << "Received binary message of length:" << message.length() << "from server.";
     emit binaryMessageReceived(message);
 }
 

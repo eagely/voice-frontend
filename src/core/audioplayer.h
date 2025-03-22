@@ -1,18 +1,16 @@
 #pragma once
 #include <QAudioOutput>
-#include <QBuffer>
-#include <QByteArray>
 #include <QMediaPlayer>
 #include <QObject>
+#include "streamingbuffer.h"
 
 class AudioPlayer : public QObject
 {
     Q_OBJECT
 public:
     explicit AudioPlayer(QObject *parent = nullptr);
-    ~AudioPlayer();
 
-    bool loadAudio(const QByteArray &audioData);
+    bool appendAudioData(const QByteArray &audioData);
 
     void play();
     void pause();
@@ -21,5 +19,5 @@ public:
 private:
     QMediaPlayer *m_player;
     QAudioOutput *m_audioOutput;
-    QBuffer *m_buffer;
+    StreamingBuffer *m_streamBuffer;
 };

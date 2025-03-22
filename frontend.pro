@@ -14,6 +14,7 @@ SOURCES += \
     src/core/mainwidget.cpp \
     src/core/mainwindow.cpp \
     src/core/settingswidget.cpp \
+    src/core/streamingbuffer.cpp \
     src/main.cpp
 
 HEADERS += \
@@ -21,7 +22,8 @@ HEADERS += \
     src/core/backendclient.h \
     src/core/mainwidget.h \
     src/core/mainwindow.h \
-    src/core/settingswidget.h
+    src/core/settingswidget.h \
+    src/core/streamingbuffer.h
 
 FORMS += \
     src/gui/mainwidget.ui \

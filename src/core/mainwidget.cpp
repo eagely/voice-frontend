@@ -42,7 +42,8 @@ void MainWidget::onRecordButtonClicked() {
 
 void MainWidget::onBinaryMessageReceived(const QByteArray &message)
 {
-    audioPlayer->loadAudio(message);
+    qDebug() << "Playing message of length" << message.length();
+    audioPlayer->appendAudioData(message);
     audioPlayer->play();
 }
 
