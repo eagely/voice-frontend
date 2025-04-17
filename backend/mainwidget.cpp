@@ -11,6 +11,7 @@ MainWidget::MainWidget(QWidget *parent, BackendClient *backendClient)
     audioPlayer = new AudioPlayer();
 
     setWindowFlags(Qt::FramelessWindowHint);
+    ui->output->setVisible(false);
     ui->output->setTextInteractionFlags(Qt::TextSelectableByKeyboard);
     ui->output->setTextInteractionFlags(Qt::TextSelectableByMouse);
 

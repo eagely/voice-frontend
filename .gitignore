@@ -76,3 +76,6 @@ CMakeLists.txt.user*
 
 # IntelliJ files
 /.idea
+
+# Nix files
+shell.nix

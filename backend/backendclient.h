@@ -1,17 +1,19 @@
 #pragma once
 #include <QObject>
 #include <QWebSocket>
+#include <QtQml>
 
 class BackendClient : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
 
 public:
     explicit BackendClient(const QString &host, quint16 port, QObject *parent = nullptr);
     void cancel();
-    void config(const QString &element);
-    void startRecording();
-    void stopRecording();
+    Q_INVOKABLE void config(const QString &element);
+    Q_INVOKABLE void startRecording();
+    Q_INVOKABLE void stopRecording();
 
 signals:
     void binaryMessageReceived(const QByteArray &message);
