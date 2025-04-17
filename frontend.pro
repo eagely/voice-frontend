@@ -1,4 +1,4 @@
-QT       += core gui network multimedia websockets
+QT       += core gui network multimedia websockets qml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,27 +9,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    src/core/audioplayer.cpp \
-    src/core/backendclient.cpp \
-    src/core/mainwidget.cpp \
-    src/core/mainwindow.cpp \
-    src/core/settingswidget.cpp \
-    src/core/streamingbuffer.cpp \
-    src/main.cpp
+    backend/audioplayer.cpp \
+    backend/backendclient.cpp \
+    backend/streamingbuffer.cpp \
+    main.cpp
 
 HEADERS += \
-    src/core/audioplayer.h \
-    src/core/backendclient.h \
-    src/core/mainwidget.h \
-    src/core/mainwindow.h \
-    src/core/settingswidget.h \
-    src/core/streamingbuffer.h
+    backend/audioplayer.h \
+    backend/backendclient.h \
+    backend/streamingbuffer.h
 
-FORMS += \
-    src/gui/mainwidget.ui \
-    src/gui/mainwidget.ui \
-    src/gui/settingswidget.ui
-
+RESOURCES += resources.qrc
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

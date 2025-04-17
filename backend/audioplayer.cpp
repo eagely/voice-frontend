@@ -30,13 +30,3 @@ void AudioPlayer::play()
 {
     m_player->play();
 }
-
-void AudioPlayer::pause()
-{
-    m_player->pause();
-}
-
-void AudioPlayer::stop()
-{
-    m_player->stop();
-}
