@@ -27,7 +27,7 @@ ColumnLayout {
         onCheckedButtonChanged: {
             if (checkedButton) {
                 let configString = root.configKey + "=" + checkedButton.configValue
-                backend.config(configString)
+                backend.setConfig(configString)
             }
         }
     }

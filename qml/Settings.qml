@@ -26,7 +26,7 @@ Rectangle {
                 background: null
 
                 contentItem: Text {
-                    text: "\uf060" // FontAwesome back arrow
+                    text: "\uf060"
                     font.family: "FontAwesome"
                     font.pixelSize: 24
                     color: "#e0e5ea"
@@ -95,17 +95,17 @@ Rectangle {
                     title: "Parsing"
                     configKey: "parsing.implementation"
                     options: [
-                        { text: "Simple", value: "simple" },
-                        { text: "Advanced", value: "advanced" }
+                        { text: "Simple", value: "patternmatch" },
+                        { text: "Advanced", value: "rasa" }
                     ]
                     defaultValue: "simple"
                 }
 
                 SettingsGroup {
                     title: "Output"
-                    configKey: "tts.implementation"
+                    configKey: "synthesis.implementation"
                     options: [
-                        { text: "Local", value: "local" },
+                        { text: "Local", value: "piper" },
                         { text: "Cloud", value: "elevenlabs" }
                     ]
                     defaultValue: "local"
