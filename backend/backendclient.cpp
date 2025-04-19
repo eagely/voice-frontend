@@ -4,33 +4,38 @@
 #include <QWebSocket>
 
 BackendClient::BackendClient(const QString &host, quint16 port, QObject *parent)
-    : QObject(parent), socket(new QWebSocket), m_host(host), m_port(port),
-      reconnectTimer(new QTimer(this))
+    : QObject(parent), m_socket(new QWebSocket), m_host(host), m_port(port),
+      m_reconnectTimer(new QTimer(this))
 {
-    reconnectTimer->setInterval(RECONNECT_DELAY_MS);
-    reconnectTimer->setSingleShot(false);
+    m_reconnectTimer->setInterval(RECONNECT_DELAY_MS);
+    m_reconnectTimer->setSingleShot(false);
 
-    connect(socket, &QWebSocket::connected, this, &BackendClient::onConnected);
-    connect(socket, &QWebSocket::disconnected, this, &BackendClient::onDisconnected);
-    connect(socket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
+    connect(m_socket, &QWebSocket::connected, this, &BackendClient::onConnected);
+    connect(m_socket, &QWebSocket::disconnected, this, &BackendClient::onDisconnected);
+    connect(m_socket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
             this, &BackendClient::onError);
-    connect(socket, &QWebSocket::textMessageReceived,
+    connect(m_socket, &QWebSocket::textMessageReceived,
             this, &BackendClient::onTextMessageReceived);
-    connect(socket, &QWebSocket::binaryMessageReceived, this, &BackendClient::onBinaryMessageReceived);
-    connect(socket, &QWebSocket::bytesWritten, this, &BackendClient::onBytesWritten);
-    connect(reconnectTimer, &QTimer::timeout, this, &BackendClient::attemptReconnection);
+    connect(m_socket, &QWebSocket::binaryMessageReceived, this, &BackendClient::onBinaryMessageReceived);
+    connect(m_socket, &QWebSocket::bytesWritten, this, &BackendClient::onBytesWritten);
+    connect(m_reconnectTimer, &QTimer::timeout, this, &BackendClient::attemptReconnection);
 
     attemptReconnection();
 }
 
 BackendClient::~BackendClient()
 {
-    reconnectTimer->stop();
-    socket->deleteLater();
+    m_reconnectTimer->stop();
+    m_socket->deleteLater();
 }
 
 void BackendClient::cancel() {
     sendMessage("AC");
+}
+
+void BackendClient::getConfig() {
+    qDebug() << "Requesting current configuration state from server.";
+    sendMessage("G");
 }
 
 void BackendClient::setConfig(const QString &element) {
@@ -47,12 +52,12 @@ void BackendClient::stopRecording() {
 
 void BackendClient::sendMessage(const QString &message)
 {
-    if (socket->state() == QAbstractSocket::ConnectedState) {
+    if (m_socket->state() == QAbstractSocket::ConnectedState) {
         QString fullMessage = message;
         if (!message.endsWith('\n')) {
             fullMessage += '\n';
         }
-        socket->sendTextMessage(fullMessage);
+        m_socket->sendTextMessage(fullMessage);
         qDebug() << "Message sent:" << message;
     } else {
         qDebug() << "WebSocket not connected.";
@@ -63,31 +68,32 @@ void BackendClient::sendMessage(const QString &message)
 void BackendClient::onConnected()
 {
     qDebug() << "Connected to host!";
-    reconnectTimer->stop();
+    m_reconnectTimer->stop();
+    getConfig();
 }
 
 void BackendClient::onDisconnected()
 {
     qDebug() << "Disconnected from server.";
-    if (!reconnectTimer->isActive()) {
-        reconnectTimer->start();
+    if (!m_reconnectTimer->isActive()) {
+        m_reconnectTimer->start();
     }
 }
 
 void BackendClient::onError(QAbstractSocket::SocketError error)
 {
     Q_UNUSED(error)
-    if (socket->state() != QAbstractSocket::ConnectedState && !reconnectTimer->isActive()) {
-        reconnectTimer->start();
+    if (m_socket->state() != QAbstractSocket::ConnectedState && !m_reconnectTimer->isActive()) {
+        m_reconnectTimer->start();
     }
 }
 
 void BackendClient::attemptReconnection()
 {
-    if (socket->state() == QAbstractSocket::UnconnectedState) {
+    if (m_socket->state() == QAbstractSocket::UnconnectedState) {
         qDebug() << "Attempting to reconnect...";
         QString url = QString("ws://%1:%2").arg(m_host).arg(m_port);
-        socket->open(QUrl(url));
+        m_socket->open(QUrl(url));
     }
 }
 
@@ -99,7 +105,15 @@ void BackendClient::onTextMessageReceived(const QString &message)
     } else if (text.endsWith("\n")) {
         text.chop(1);
     }
-    emit textMessageReceived(text);
+
+    if (text.startsWith("O")) {
+        qDebug() << "Received text:" << text.mid(1);
+        emit textMessageReceived(text.mid(1));
+    }
+    else if (text.startsWith("C")) {
+        qDebug() << "Received configuration update:" << text.mid(1);
+        emit configUpdateReceived(text.mid(1));
+    }
 }
 
 void BackendClient::onBinaryMessageReceived(const QByteArray &message)

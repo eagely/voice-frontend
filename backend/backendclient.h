@@ -1,6 +1,4 @@
-#ifndef BACKENDCLIENT_H
-#define BACKENDCLIENT_H
-
+#pragma once
 #include <QObject>
 #include <QWebSocket>
 #include <QTimer>
@@ -14,6 +12,7 @@ public:
     ~BackendClient();
 
     void cancel();
+    Q_INVOKABLE void getConfig();
     Q_INVOKABLE void setConfig(const QString &element);
     Q_INVOKABLE void startRecording();
     Q_INVOKABLE void stopRecording();
@@ -21,6 +20,7 @@ public:
 signals:
     void textMessageReceived(const QString &message);
     void binaryMessageReceived(const QByteArray &message);
+    void configUpdateReceived(const QString &config);
     void errorOccurred(const QString &error);
 
 private slots:
@@ -35,11 +35,10 @@ private slots:
 private:
     void sendMessage(const QString &message);
 
-    QWebSocket *socket;
+    QWebSocket *m_socket;
     QString m_host;
     quint16 m_port;
-    QTimer *reconnectTimer;
+    QTimer *m_reconnectTimer;
+    QMap<QString, QString> m_config;
     const int RECONNECT_DELAY_MS = 1000;
 };
-
-#endif // BACKENDCLIENT_H

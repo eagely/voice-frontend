@@ -98,7 +98,7 @@ Rectangle {
                         { text: "Simple", value: "patternmatch" },
                         { text: "Advanced", value: "rasa" }
                     ]
-                    defaultValue: "simple"
+                    defaultValue: "patternmatch"
                 }
 
                 SettingsGroup {
@@ -108,7 +108,7 @@ Rectangle {
                         { text: "Local", value: "piper" },
                         { text: "Cloud", value: "elevenlabs" }
                     ]
-                    defaultValue: "local"
+                    defaultValue: "piper"
                 }
             }
         }

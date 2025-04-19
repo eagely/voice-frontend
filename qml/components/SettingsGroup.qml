@@ -15,6 +15,8 @@ ColumnLayout {
     property string configKey: "setting.key"
     property string defaultValue: options.length > 0 ? options[0].value : ""
 
+    property bool updatingFromServer: false
+
     Text {
         text: title
         font.pixelSize: 18
@@ -25,7 +27,7 @@ ColumnLayout {
     ButtonGroup {
         id: buttonGroup
         onCheckedButtonChanged: {
-            if (checkedButton) {
+            if (checkedButton && !root.updatingFromServer) {
                 let configString = root.configKey + "=" + checkedButton.configValue
                 backend.setConfig(configString)
             }
@@ -36,6 +38,7 @@ ColumnLayout {
         spacing: 16
 
         Repeater {
+            id: radioRepeater
             model: options
 
             SettingsRadioButton {
@@ -45,5 +48,21 @@ ColumnLayout {
                 checked: modelData.value === root.defaultValue
             }
         }
+    }
+
+    function updateSelectedButton(configLine) {
+        if (configLine.startsWith(root.configKey + "=")) {
+            let value = configLine.split("=")[1]
+            root.updatingFromServer = true
+            for (let i = 0; i < radioRepeater.count; ++i) {
+                let btn = radioRepeater.itemAt(i)
+                btn.checked = (btn.configValue === value)
+            }
+            root.updatingFromServer = false
+        }
+    }
+
+    Component.onCompleted: {
+        backend.configUpdateReceived.connect(updateSelectedButton)
     }
 }
