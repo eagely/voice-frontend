@@ -5,8 +5,9 @@
         <file>qml/components/RecordButton.qml</file>
         <file>qml/components/SettingsButton.qml</file>
         <file>qml/components/WakeWordToggle.qml</file>
-        <file>qml/components/SettingsGroup.qml</file>
+        <file>qml/components/SettingsRadioButtonGroup.qml</file>
         <file>qml/components/SettingsRadioButton.qml</file>
         <file>qml/components/ActionButton.qml</file>
+        <file>qml/components/SettingsTextInput.qml</file>
     </qresource>
 </RCC>
