@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 
 Column {
@@ -54,6 +54,19 @@ Column {
 
         onToggled: {
             wakeWordControl.enabled = checked
+            backend.setConfig("recording.wake_word_enabled=" + (checked ? "true" : "false"))
         }
+    }
+
+    function updateEnabled(configLine) {
+        if (configLine.startsWith("recording.wake_word_enabled=")) {
+            let value = configLine.split("=")[1]
+            wakeWordControl.enabled = (value === "true")
+            wakeWordToggle.checked = wakeWordControl.enabled
+        }
+    }
+
+    Component.onCompleted: {
+        backend.configUpdateReceived.connect(updateEnabled)
     }
 }

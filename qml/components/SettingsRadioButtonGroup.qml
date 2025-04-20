@@ -1,20 +1,21 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 ColumnLayout {
     id: root
     Layout.fillWidth: true
     spacing: 10
 
-    property string title: "Setting Group"
+    property string title: "Settings Group"
     property var options: [
         { text: "Option 1", value: "option1" },
         { text: "Option 2", value: "option2" }
     ]
     property string configKey: "setting.key"
     property string defaultValue: options.length > 0 ? options[0].value : ""
-
+    property string selectedValue: defaultValue
+    
     property bool updatingFromServer: false
 
     Text {
@@ -28,8 +29,8 @@ ColumnLayout {
         id: buttonGroup
         onCheckedButtonChanged: {
             if (checkedButton && !root.updatingFromServer) {
-                let configString = root.configKey + "=" + checkedButton.configValue
-                backend.setConfig(configString)
+                root.selectedValue = checkedButton.configValue
+                backend.setConfig(root.configKey + "=" + checkedButton.configValue)
             }
         }
     }
@@ -54,6 +55,7 @@ ColumnLayout {
         if (configLine.startsWith(root.configKey + "=")) {
             let value = configLine.split("=")[1]
             root.updatingFromServer = true
+            root.selectedValue = value
             for (let i = 0; i < radioRepeater.count; ++i) {
                 let btn = radioRepeater.itemAt(i)
                 btn.checked = (btn.configValue === value)
