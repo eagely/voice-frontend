@@ -3,8 +3,8 @@ import QtQuick.Controls
 
 Button {
     id: settingsButton
-    width: 44
-    height: 44
+    width: 40
+    height: 40
 
     background: null
 

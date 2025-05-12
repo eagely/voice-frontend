@@ -10,7 +10,7 @@ RadioButton {
         implicitHeight: 22
         x: radioButton.leftPadding
         y: parent.height / 2 - height / 2
-        radius: 11
+        radius: width / 2
         border.color: radioButton.checked ? "#007bff" : "#a0a5ac"
         border.width: 2
         color: "transparent"
@@ -20,7 +20,7 @@ RadioButton {
             height: 12
             x: 5
             y: 5
-            radius: 6
+            radius: width / 2
             color: radioButton.checked ? "#007bff" : "transparent"
             visible: radioButton.checked
         }
