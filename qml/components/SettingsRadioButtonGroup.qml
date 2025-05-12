@@ -15,7 +15,6 @@ ColumnLayout {
     property string configKey: "setting.key"
     property string defaultValue: options.length > 0 ? options[0].value : ""
     property string selectedValue: defaultValue
-    
     property bool updatingFromServer: false
 
     Text {

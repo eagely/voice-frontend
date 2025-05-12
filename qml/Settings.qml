@@ -13,8 +13,11 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 24
-        spacing: 20
+        anchors.topMargin: 4
+        anchors.bottomMargin: 4
+        anchors.leftMargin: 12
+        anchors.rightMargin: 12
+        spacing: 10
 
         RowLayout {
             Layout.fillWidth: true
@@ -39,7 +42,7 @@ Rectangle {
 
             Text {
                 text: "Settings"
-                font.pixelSize: 28
+                font.pixelSize: 24
                 font.weight: Font.Medium
                 color: "#ffffff"
                 Layout.fillWidth: true
@@ -233,6 +236,12 @@ Rectangle {
                         configKey: "synthesis.piper_voice"
                         defaultValue: "en_US-ljspeech-high.onnx"
                     }
+                }
+
+                SettingsTextInput {
+                    title: "Response Kind (Text or Audio)"
+                    configKey: "response.response_kind"
+                    defaultValue: "audio"
                 }
             }
         }

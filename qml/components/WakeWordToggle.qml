@@ -23,13 +23,22 @@ Column {
         indicator: Rectangle {
             width: 80
             height: 40
-            radius: 40
+            radius: width / 2
             color: wakeWordToggle.checked ? "#28a745" : "#555b61"
+
+            layer.enabled: true
+            layer.effect: DropShadow {
+                horizontalOffset: 0
+                verticalOffset: 4
+                radius: 6
+                samples: 16
+                color: Qt.rgba(0, 0, 0, 0.3)
+            }
 
             Rectangle {
                 width: 32
                 height: 32
-                radius: 16
+                radius: width / 2
                 color: wakeWordToggle.checked ? "#ffffff" : "#cfd4d9"
                 x: wakeWordToggle.checked ? parent.width - width - 4 : 4
                 y: 4
